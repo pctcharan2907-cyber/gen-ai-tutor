@@ -1,47 +1,29 @@
-import os
-from pathlib import Path
 from dotenv import load_dotenv
-from google import genai
+from client import LLMClient
+from factory import get_llm_provider
 
-# Load environment variables from this project's .env file
-env_path = Path(__file__).resolve().parent / ".env"
-load_dotenv(dotenv_path=env_path, override=True)
+load_dotenv()
 
-# Read and check the Gemini API key
-api_key = os.getenv("GEMINI_API_KEY")
+print("1. Gemini (Hosted LLM)")
+print("2. ollama (Local LLM)")
+print("3. GPT (Hosted LLM)")
 
-if not api_key:
-    raise ValueError("Gemini API key not found in .env file")
-
-# Create the Gemini client
-client = genai.Client(api_key=api_key)
-
-print("\n===== DSA AI TUTOR =====")
-
-# Ask the student for a question
-student_question = input("\nWhat would you like to learn today? ")
-
-# Send the question to Gemini
-response = client.models.generate_content(
-    model="gemini-3.1-flash-lite",
-    contents=(
-        "You are a friendly Data Structures and Algorithms tutor. "
-        "Explain concepts in simple language with examples and analogies.\n\n"
-        f"Student question: {student_question}"
-    )
-)
-
-# Show Gemini's answer
-print("\n===== DSA AI TUTOR RESPONSE =====\n")
-print(response.text)
-
-# Show token usage, if available
-print("\n===== API USAGE INFORMATION =====")
-usage = response.usage_metadata
-
-if usage:
-    print("Input tokens:", usage.prompt_token_count)
-    print("Output tokens:", usage.candidates_token_count)
-    print("Total tokens:", usage.total_token_count)
+choice = input("\nSelect your LLM provider (1, 2, or 3): ").strip()
+if choice == "1" or choice.lower() == "gemini":
+    provider_name = "gemini"
+elif choice == "2" or choice.lower() == "ollama":
+    provider_name = "ollama"
+elif choice == "3" or choice.lower() in ("gpt", "openai"):
+    provider_name = "gpt"
 else:
-    print("Usage information not available.")
+    raise ValueError("Invalid selection. Please enter 1, 2, or 3.")
+
+provider = get_llm_provider(provider_name)
+
+client = LLMClient(provider)
+
+prompt = input("\nEnter your question: ")
+
+print("\n===== DSA AI TUTOR RESPONSE =====\n")
+answer = client.generate_response(prompt)
+print(answer)
