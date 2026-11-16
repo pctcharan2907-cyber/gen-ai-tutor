@@ -1,29 +1,62 @@
 from dotenv import load_dotenv
+
 from client import LLMClient
 from factory import get_llm_provider
+from mongodb_logger import MongoDBLogger
+from ollama_metrics import generate_response_with_metrics
 
-load_dotenv()
 
-print("1. Gemini (Hosted LLM)")
-print("2. ollama (Local LLM)")
-print("3. GPT (Hosted LLM)")
+def main():
+    load_dotenv()
 
-choice = input("\nSelect your LLM provider (1, 2, or 3): ").strip()
-if choice == "1" or choice.lower() == "gemini":
-    provider_name = "gemini"
-elif choice == "2" or choice.lower() == "ollama":
-    provider_name = "ollama"
-elif choice == "3" or choice.lower() in ("gpt", "openai"):
-    provider_name = "gpt"
-else:
-    raise ValueError("Invalid selection. Please enter 1, 2, or 3.")
+    print("1. Gemini (Hosted LLM)")
+    print("2. Ollama (Local LLM)")
+    print("3. GPT (Hosted LLM)")
 
-provider = get_llm_provider(provider_name)
+    choice = input("\nSelect your LLM provider (1, 2, or 3): ").strip().lower()
 
-client = LLMClient(provider)
+    if choice in ("1", "gemini"):
+        provider_name = "gemini"
+    elif choice in ("2", "ollama"):
+        provider_name = "ollama"
+    elif choice in ("3", "gpt", "openai"):
+        provider_name = "gpt"
+    else:
+        raise ValueError("Invalid selection. Please enter 1, 2, or 3.")
 
-prompt = input("\nEnter your question: ")
+    prompt = input("\nEnter your question: ")
 
-print("\n===== DSA AI TUTOR RESPONSE =====\n")
-answer = client.generate_response(prompt)
-print(answer)
+    if provider_name == "ollama":
+        result = generate_response_with_metrics(prompt)
+        answer = result["response"]
+        metrics = result["metrics"]
+    else:
+        provider = get_llm_provider(provider_name)
+        client = LLMClient(provider)
+        answer = client.generate_response(prompt)
+        metrics = {}
+
+    print("\n===== DSA AI TUTOR RESPONSE =====\n")
+    print(answer)
+
+    if metrics:
+        print("\n===== OLLAMA METRICS =====")
+        for name, value in metrics.items():
+            print(f"{name}: {value}")
+
+    logger = MongoDBLogger()
+
+    try:
+        log_id = logger.log_request(
+            provider=provider_name,
+            prompt=prompt,
+            response=answer,
+            metrics=metrics,
+        )
+        print(f"\nRequest saved to MongoDB. ID: {log_id}")
+    finally:
+        logger.close()
+
+
+if __name__ == "__main__":
+    main()
