@@ -1,0 +1,42 @@
+{
+  "validation.jsonl": {
+    "records": 5000,
+    "changed_records": 302,
+    "replacements": {
+      "'\u00e2\u20ac\u0153'": 558,
+      "'\u00e2\u20ac'": 560,
+      "'\u00e2\u20ac\u201d'": 18,
+      "'\u00e2\u20ac\u2122'": 396,
+      "'\u00e2\u20ac\u201c'": 23,
+      "'\u00e2\u20ac\u02dc'": 4,
+      "'\u00e2\u20ac\u00a6'": 4
+    }
+  },
+  "test.jsonl": {
+    "records": 4989,
+    "changed_records": 303,
+    "replacements": {
+      "'\u00e2\u20ac\u201c'": 20,
+      "'\u00e2\u20ac\u0153'": 611,
+      "'\u00e2\u20ac\u2122'": 502,
+      "'\u00e2\u20ac'": 612,
+      "'\u00e2\u20ac\u201d'": 19,
+      "'\u00e2\u20ac\u02dc'": 9,
+      "'\u00e2\u20ac\u00a6'": 4
+    }
+  },
+  "train.jsonl": {
+    "records": 44899,
+    "changed_records": 2479,
+    "replacements": {
+      "'\u00e2\u20ac\u0153'": 4944,
+      "'\u00e2\u20ac'": 4946,
+      "'\u00e2\u20ac\u2122'": 3664,
+      "'\u00e2\u20ac\u201d'": 89,
+      "'\u00e2\u20ac\u201c'": 232,
+      "'\u00e2\u20ac\u00a6'": 26,
+      "'\u00e2\u20ac\u02dc'": 78,
+      "'\u00c2 '": 2
+    }
+  }
+}
