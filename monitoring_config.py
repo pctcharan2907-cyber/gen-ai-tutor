@@ -1,0 +1,10 @@
+MODEL_NAME = "llama3.2"
+
+CONTEXT_WINDOW_SIZE = 4096
+RESERVED_OUTPUT_TOKENS = 1024
+
+# Demonstration rates used by the lecturer's budget example
+INPUT_COST_PER_1K_TOKENS = 0.50
+OUTPUT_COST_PER_1K_TOKENS = 1.50
+
+MAX_REQUESTS_PER_MINUTE = 10
